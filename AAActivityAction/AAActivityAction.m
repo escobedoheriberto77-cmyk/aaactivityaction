@@ -72,7 +72,17 @@ static CGFloat const kPageDotHeight = 20.0f;
     // FIXME: more easy.
     if (_panelView)
         return (_panelView.frame.size.width - 2 * kPanelViewSideMargin) / self.activityWidth;
-    BOOL isLandscape = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
+    BOOL isLandscape = NO;
+    if (@available(iOS 13.0, *)) {
+        for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+            if ([scene isKindOfClass:[UIWindowScene class]] && scene.activationState == UISceneActivationStateForegroundActive) {
+                isLandscape = UIInterfaceOrientationIsLandscape(((UIWindowScene *)scene).interfaceOrientation);
+                break;
+            }
+        }
+    } else {
+        isLandscape = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
+    }
     return ((isLandscape ? self.bounds.size.height - self.safeAreaInsets.bottom : self.bounds.size.width - self.safeAreaInsets.left - self.safeAreaInsets.right) - 2 * kPanelViewSideMargin) / self.activityWidth;
 }
 
@@ -92,8 +102,8 @@ static CGFloat const kPageDotHeight = 20.0f;
         _directActionEnabled = NO;
         
         // Forced resize to iPad size on iPad.
-        _imageSize = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? AAImageSizeiPad : imageSize;
-        
+        _imageSize = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad ? AAImageSizeiPad : imageSize;
+
         // check supported activitiy
         NSMutableArray *array = [NSMutableArray array];
         for (AAActivity *activity in applicationActivities)
@@ -165,8 +175,9 @@ static CGFloat const kPageDotHeight = 20.0f;
         [button setImage:activity.image forState:UIControlStateNormal];
         CGFloat sideWidth = activityWidth - activity.image.size.height;
         CGFloat leftInset = roundf(sideWidth / 2.0f);
-        button.imageEdgeInsets = UIEdgeInsetsMake(0, leftInset, sideWidth, sideWidth - leftInset);
         button.accessibilityLabel = activity.title;
+        // UIButtonConfiguration have not `showsTouchWhenHighlighted` replacement.
+        button.imageEdgeInsets = UIEdgeInsetsMake(0, leftInset, sideWidth, sideWidth - leftInset);
         button.showsTouchWhenHighlighted = _imageSize == AAImageSizeSmall ? YES : NO;
         
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, activity.image.size.height + 2.0f, activityWidth, 10.0f)];
