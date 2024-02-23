@@ -1,8 +1,10 @@
 ## AAActivityAction [![build](https://travis-ci.org/r-plus/AAActivityAction.svg?branch=master)](https://travis-ci.org/r-plus/AAActivityAction)
 
-AAActivityAction is Reeder like ActionSheet. Method architecture is inspired by `UIActivity` and `UIActivityViewController`.
+AAActivityAction is Reeder 3 like ActionSheet. Method architecture is inspired by `UIActivity` and `UIActivityViewController`.
 
-![https://dl.dropbox.com/u/149268/AA.png](https://dl.dropbox.com/u/149268/AA.png)
+AAActivityAction | Reeder 3
+--- | ---
+<img src="./images/sample.png" width="300"/> | <img src="./images/reeder3.png" width="300" />
 
 ### Installation
 
